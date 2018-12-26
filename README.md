@@ -1,4 +1,4 @@
-NVIDIA-COMPLEX
+NBSWITCH
 ===
 Helper script for switching between bbswitch(bumblebee) and nvidia.
 
@@ -42,4 +42,12 @@ If display manager is loaded, you will get you screen freezed or other unexpecte
     sudo make off
     # To inspect current status
     make show
+    ```
+
+1. Restart X server.
+
+    ```bash
+    # Depending on your distribution, the X server may differ.
+    # The most used display managers are lightdm and gdm(gdm3)
+    sudo service lightdm start
     ```
