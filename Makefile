@@ -3,14 +3,9 @@ BLACKLISTTARGET=/etc/modprobe.d/custom-bumblebee.conf
 NVIDIAON=lsmod | grep nvidia > /dev/null
 BBSWITCHON=lsmod | grep bbswitch > /dev/null
 
-.PHONY: test off on
+.PHONY: show off on
 
 show:
-	@if [ -f $(BLACKLISTTARGET) ]; then\
-		echo blacklist config file exist;\
-	else\
-		echo blacklist config file not exist;\
-	fi
 	@if $(NVIDIAON); then\
 		echo nvidia on;\
 	else\
@@ -23,8 +18,8 @@ show:
 	fi
 
 off:
-	@if ! [ -f $(BLACKLISTTARGET) ]; then\
-		cp $(BLACKLISTCONF) $(BLACKLISTTARGET);\
+	@if [ -f /etc/X11/xorg.conf.d/50-prime-offload.conf ]; then\
+		rm /etc/X11/xorg.conf.d/50-prime-offload.conf;\
 	fi
 	@if $(NVIDIAON); then\
 		rmmod nvidia-uvm;\
@@ -34,17 +29,19 @@ off:
 	fi
 	@if ! $(BBSWITCHON); then\
 		modprobe bbswitch;\
-		sleep 2s && service bumblebeed start;\
+		sleep 2s && systemctl start bumblebeed;\
 	fi
 
 on:
-	@if [ -f $(BLACKLISTTARGET) ]; then\
-		rm $(BLACKLISTTARGET);\
+	@if [ ! -f /etc/X11/xorg.conf.d/50-prime-offload.conf ]; then\
+		cp config/xorg/50-prime-offload.conf /etc/X11/xorg.conf.d/;\
 	fi
 	@if $(BBSWITCHON); then\
-		sleep 2s && service bumblebeed stop;\
+		sleep 2s && systemctl stop bumblebeed;\
 		rmmod bbswitch;\
 	fi
 	@if ! $(NVIDIAON); then\
 		modprobe nvidia;\
+		modprobe nvidia-drm;\
+		modprobe nvidia-uvm;\
 	fi
