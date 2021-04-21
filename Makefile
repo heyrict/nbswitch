@@ -3,7 +3,7 @@ BLACKLISTTARGET=/etc/modprobe.d/custom-bumblebee.conf
 NVIDIAON=lsmod | grep nvidia > /dev/null
 BBSWITCHON=lsmod | grep bbswitch > /dev/null
 
-.PHONY: show off on
+.PHONY: show off on startx nvidia-startx
 
 show:
 	@if $(NVIDIAON); then\
@@ -45,3 +45,9 @@ on:
 		modprobe nvidia-drm;\
 		modprobe nvidia-uvm;\
 	fi
+
+startx: off
+	cd && startx
+
+nvidia-startx: on
+	cd && startx
